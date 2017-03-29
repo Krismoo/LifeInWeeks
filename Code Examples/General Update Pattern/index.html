@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>General Update Pattern</title>
+    <style>
+        body {
+            font: 10px sans-serif;
+            padding-left: 10px;
+        }
+
+        h1 {
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: grey;
+        }
+
+        #output {
+            padding-top: 10px;
+        }
+
+        .box {
+            width: 50px;
+            height: 50px;
+            color: white;
+            background-color: steelblue;
+            border: white solid 2px;
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+            font-size: xx-large;
+        }
+
+    </style>
+</head>
+<body>
+<h2>Enter &middot; Update &middot; Remove</h2>
+<input id="input" type="text" autofocus/>
+<div id="output"></div>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+
+  const input = d3.select("#input");
+  const output = d3.select("#output");
+
+  const refresh = () => {
+    const data = d3.event.target.value.split('');
+    const selection = output.selectAll("div").data(data);
+
+    // enter
+    selection.enter()
+      .append("div")
+      .attr("class", "box")
+      .text(d => d);
+
+    // update
+    selection.text(d => d);
+
+    // remove
+    selection.exit().remove();
+  };
+
+  input.on("input", refresh);
+
+</script>
+
+</body>
+</html>

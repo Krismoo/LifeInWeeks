@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Linear Scale</title>
+    <style>
+        body {
+            font: 10px sans-serif;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: grey;
+        }
+
+        .chart {
+            background-color: lightgrey;
+            padding: 30px;
+        }
+
+    </style>
+</head>
+<body>
+<h2>Continuous Input Domain &rarr; Continuous Output Range</h2>
+<svg class="chart"></svg>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+
+  const chartWidth = 50;
+  const chartHeight = 300;
+
+  const data = [30, 20, 10, 200];
+
+  const yExtent = d3.extent(data); // [min, max]
+
+  const yScale = d3.scaleLinear()
+    .domain(yExtent)
+    .range([chartHeight, 0]); // y-down
+
+  const svg = d3.select(".chart")
+    .attr("width", chartWidth)
+    .attr("height", chartHeight)
+    .append("g");
+
+  svg.selectAll("circle")
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("cx", chartWidth / 2)
+    .attr("cy", yScale) // d => yScale(d)
+    .attr("r", 20)
+    .style("fill", "steelblue")
+    .style("stroke", "lightsteelblue");
+
+  const yAxis = d3.axisLeft(yScale);
+  svg.call(yAxis);
+
+</script>
+
+</body>
+</html>

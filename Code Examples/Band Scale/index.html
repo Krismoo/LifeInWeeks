@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Band Scale</title>
+    <style>
+        body {
+            font: 10px sans-serif;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: grey;
+        }
+
+        .chart {
+            background-color: lightgrey;
+            padding: 30px;
+        }
+
+    </style>
+</head>
+<body>
+<h2>Discrete Input Domain &rarr; Continuous Output Bands</h2>
+<svg class="chart"></svg>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+
+  const chartWidth = 500;
+  const chartHeight = 500;
+
+  const columnCount = 5;
+
+  const data = d3.range(1, columnCount + 1);
+
+  const xScale = d3.scaleBand()
+    .domain(data)
+    .range([0, chartWidth])
+    .padding(0.1);
+
+  const svg = d3.select(".chart")
+    .attr("width", chartWidth)
+    .attr("height", chartHeight)
+    .append("g");
+
+  svg.selectAll("rect")
+    .data(data)
+    .enter()
+    .append("rect")
+    .attr("x", xScale)
+    .attr("y", 0)
+    .attr("width", xScale.bandwidth())
+    .attr("height", chartHeight)
+    .style("fill", "steelblue");
+
+  const xAxis = d3.axisBottom(xScale);
+  svg.append("g")
+    .call(xAxis)
+    .attr("transform", "translate(0," + chartHeight + ")");
+
+</script>
+
+</body>
+</html>
