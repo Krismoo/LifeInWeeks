@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Simple Template</title>
+    <title>Life in Weeks</title>
     <style>
 
         body {
@@ -15,11 +15,11 @@
         }
 
         svg {
-            background-color: steelblue;
+            border: 1px solid black;
         }
 
-        .content {
-            fill: lightsteelblue;
+        .week {
+            stroke: black;
         }
 
         .label {
@@ -32,8 +32,8 @@
 </head>
 <body>
 
-<h2>A scaffold for simple visualizations</h2>
-<svg width="800" height="500"></svg>
+<h2>The Life of Me</h2>
+<svg width="620" height="1100"></svg>
 
 <script src="https://d3js.org/d3.v4.js"></script>
 <script>
@@ -48,46 +48,43 @@
   const vis = svg.append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // Everything below is for illustration purposes
-  // delete it and replace it with your own visualization (by appending to `vis`)
-
-  // -- ▼ DELETE FROM HERE ▼ --
-
-  // illustrate content area dimensions (makes container g element grow accordingly)
-  const rect = vis.append("rect")
-    .attr("class", "content")
-    .attr("width", width)
-    .attr("height", height);
-
   // illustrate left/right margins
   const xScale = d3.scaleLinear()
-    .domain([margin.left, margin.left + width])
+    .domain([1,52])
     .range([0, width]);
   vis.append("g").call(d3.axisTop(xScale));
 
   // illustrate top/bottom margins
   const yScale = d3.scaleLinear()
-    .domain([margin.top, margin.top + height])
+    .domain([0,90])
     .range([0, height]);
   vis.append("g").call(d3.axisLeft(yScale));
-
-  // Tip: name your selections and work with CSS classes
-  const label = vis.append("g")
-    .attr("class", "label");
-
-  const data = ["Content", "Area"];
-
-  label.selectAll("text")
-    .data(data)
-    .enter()
-    .append("text")
-    .text(d => d)
-    .attr("x", width / 2)
-    .attr("y", (d, i) => height / 2 + (i * 20))
-    .attr("text-anchor", "middle");
-
-  // -- ▲ DELETE UNTIL HERE ▲ --
-
+  
+  /*const data = new Array(90);
+  for(var i=0;i<data.length;i++){
+    data[i] = new Array(52);
+  }
+  data[0][14] = "Duplo";
+  data[3][21] = "End Duplo";
+  data[5][40] = "Lego";
+  data[7][11] = "End Lego";*/
+  
+  const weeks = new Array(91*52);
+  for(var i = 0; i < weeks.length; i++) {
+	weeks[i] = [Math.floor(i/52),i%52+1, (i > 1500 && i % 3 == 0 ? 1 : 0)];
+  }
+  
+  vis.selectAll("rect")
+    .data(weeks)
+	.enter()
+	.append("rect")
+	.attr("class", "week")
+	.attr("x", d => xScale(d[1]))
+    .attr("y", d => yScale(d[0]))
+	.attr("fill", d => (d[2] == 1 ? "red" : "none"))
+    .attr("width", (width/65)+"px")
+    .attr("height", (height/110)+"px");
+  
 </script>
 
 </body>
