@@ -37,7 +37,6 @@
 
 <script src="https://d3js.org/d3.v4.js"></script>
 <script>
-
   const margin = {top: 50, right: 50, bottom: 50, left: 50};
 
   const svg = d3.select("svg");
@@ -69,9 +68,51 @@
   data[5][40] = "Lego";
   data[7][11] = "End Lego";*/
   
+  const birthday = new Date("1993-05-30");
+  
+  const specialDays = [{
+	date: new Date("2005-03-17"),
+	name: "Goht dich en Scheiss a",
+	color: getRandomColor()
+  }, {
+	date: new Date("2009-11-13"),
+	name: "Geburtstag",
+	color: getRandomColor()
+  },
+  {
+    date: new Date("2014-09-20"),
+	name: "Nicolas <3",
+	color: getRandomColor()
+  }];
+  
+  const specialAreas = [{
+	startDate: new Date("2004-02-17"),
+	endDate: new Date("2004-03-17"),
+	name: "Goht dich en Scheiss a",
+	color: getRandomColor()
+  }, {
+	startDate: new Date("2008-10-13"),
+	endDate: new Date("2008-11-13"),
+	name: "Geburtstag",
+	color: getRandomColor()
+  },
+  {
+    startDate: new Date("2013-09-20"),
+    endDate: new Date("2013-10-20"),
+	name: "Nicolas <3",
+	color: getRandomColor()
+  }];
+  
   const weeks = new Array(91*52);
   for(var i = 0; i < weeks.length; i++) {
-	weeks[i] = [Math.floor(i/52),i%52+1, (i > 1500 && i % 3 == 0 ? 1 : 0)];
+	event = findSpecialEvent(Math.floor(i/52), i%52+1);
+	weeks[i] = {
+		year: Math.floor(i/52),
+		month: i%52+1, 
+		name: event[0],
+		date: event[1],
+		color: event[2]
+	};
   }
   
   vis.selectAll("rect")
@@ -79,12 +120,69 @@
 	.enter()
 	.append("rect")
 	.attr("class", "week")
-	.attr("x", d => xScale(d[1]))
-    .attr("y", d => yScale(d[0]))
-	.attr("fill", d => (d[2] == 1 ? "red" : "none"))
+	.attr("x", d => xScale(d["month"]))
+    .attr("y", d => yScale(d["year"]))
+	.attr("fill", d => d["color"])
     .attr("width", (width/65)+"px")
     .attr("height", (height/110)+"px");
   
+  /*
+  find event in specified year and week
+  year: 0-90
+  week: 1-52
+  */
+  function findSpecialEvent(year, week) {
+	year = year + birthday.getFullYear();
+    var name = "Wochenstart";
+    var weekstart = getDateOfISOWeek(week, year);
+	var color = "#FFFFFF";
+	var date = weekstart;
+	var found = false;
+	specialDays.forEach(function(e, index) {
+	  var nextweekstart = new Date(weekstart);
+	  nextweekstart.setDate(nextweekstart.getDate() + 7);
+	  if(e.date >= weekstart && e.date < nextweekstart) {
+		name = e.name;
+		date = e.date;
+		color = e.color;
+		found = true;
+		//break;
+	  }
+	});
+	if(!found) {
+	  specialAreas.forEach(function(e, index) {
+	    var nextweekstart = new Date(weekstart);
+	    nextweekstart.setDate(nextweekstart.getDate() + 7);
+	    if((e.startDate < nextweekstart) && (e.endDate >= weekstart)) {
+          name = e.name;
+		  date = e.date;
+		  color = e.color;
+		  //break;
+	    }
+	  });
+	}
+    return [name, date, color];
+  }
+  
+  function getDateOfISOWeek(w, y) {
+    var simple = new Date(y, 0, 1 + (w - 1) * 7);
+    var dow = simple.getDay();
+    var ISOweekStart = simple;
+    if (dow <= 4)
+        ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+    else
+        ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+    return ISOweekStart;
+  }
+  
+  function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
 </script>
 
 </body>
