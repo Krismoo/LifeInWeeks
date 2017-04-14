@@ -27,6 +27,19 @@
             font-size: x-large;
             font-weight: bolder;
         }
+		
+		div.tooltip {	
+			position: absolute;			
+			text-align: center;			
+			width: 100px;					
+			height: 28px;					
+			padding: 2px;				
+			font: 12px sans-serif;		
+			background: lightsteelblue;	
+			border: 0px;		
+			border-radius: 8px;			
+			pointer-events: none;			
+		}
 
     </style>
 </head>
@@ -37,6 +50,8 @@
 
 <script src="https://d3js.org/d3.v4.js"></script>
 <script>
+  const year = 90;
+
   const margin = {top: 50, right: 50, bottom: 50, left: 50};
 
   const svg = d3.select("svg");
@@ -55,7 +70,7 @@
 
   // illustrate top/bottom margins
   const yScale = d3.scaleLinear()
-    .domain([0,90])
+    .domain([0,year])
     .range([0, height]);
   vis.append("g").call(d3.axisLeft(yScale));
   
@@ -83,6 +98,16 @@
     date: new Date("2014-09-20"),
 	name: "Nicolas <3",
 	color: getRandomColor()
+  },
+  {
+    date: new Date("2013-11-16"),
+	name: "Lea <3",
+	color: "#996633"
+  },
+  {
+    date: new Date("2017-04-14"),
+	name: "heute",
+	color: getRandomColor()
   }];
   
   const specialAreas = [{
@@ -101,9 +126,21 @@
     endDate: new Date("2013-10-20"),
 	name: "Nicolas <3",
 	color: getRandomColor()
+  },
+  {
+    startDate: new Date("2009-08-03"),
+    endDate: new Date("2013-08-02"),
+	name: "Lehre",
+	color: getRandomColor()
+  },
+  {
+    startDate: new Date("2014-09-14"),
+    endDate: new Date("2018-02-02"),
+	name: "Fachhochschule",
+	color: getRandomColor()
   }];
   
-  const weeks = new Array(91*52);
+  const weeks = new Array((year)*52);
   for(var i = 0; i < weeks.length; i++) {
 	event = findSpecialEvent(Math.floor(i/52), i%52+1);
 	weeks[i] = {
@@ -115,16 +152,38 @@
 	};
   }
   
+  // Define the div for the tooltip
+  var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+  
   vis.selectAll("rect")
     .data(weeks)
 	.enter()
 	.append("rect")
-	.attr("class", "week")
+	.attr("class", d => (d["color"] == "#FFFFFF" ? "week" : "week event"))
 	.attr("x", d => xScale(d["month"]))
     .attr("y", d => yScale(d["year"]))
 	.attr("fill", d => d["color"])
     .attr("width", (width/65)+"px")
     .attr("height", (height/110)+"px");
+
+  vis.selectAll("rect.event")
+	.on("mouseover", function(d) {		
+      div.transition()		
+        .duration(200)		
+        .style("opacity", .9);		
+      div.html(d.name + "<br/>")	
+        .style("left", (d3.event.pageX - 30) + "px")		
+        .style("top", (d3.event.pageY - 40) + "px");	
+    })				
+    .on("mouseout", function(d) {		
+      div.transition()		
+        .duration(500)		
+        .style("opacity", 0);	
+    });
+	
+	
   
   /*
   find event in specified year and week
