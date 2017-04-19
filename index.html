@@ -74,18 +74,25 @@
     .range([0, height]);
   vis.append("g").call(d3.axisLeft(yScale));
   
-  /*const data = new Array(90);
-  for(var i=0;i<data.length;i++){
-    data[i] = new Array(52);
-  }
-  data[0][14] = "Duplo";
-  data[3][21] = "End Duplo";
-  data[5][40] = "Lego";
-  data[7][11] = "End Lego";*/
+  
+  
+  
   
   const birthday = new Date("1993-05-30");
   
   const specialDays = [{
+	date: new Date("2083-05-30"),
+	name: "90. Geburtstag",
+	color: getRandomColor()
+  }, {
+	date: new Date("2058-05-30"),
+	name: "65. Geburtstag",
+	color: getRandomColor()
+  }, {
+	date: new Date("1993-05-30"),
+	name: "Geburt",
+	color: getRandomColor()
+  }, {
 	date: new Date("2005-03-17"),
 	name: "Goht dich en Scheiss a",
 	color: getRandomColor()
@@ -140,7 +147,10 @@
 	color: getRandomColor()
   }];
   
-  const weeks = new Array((year)*52);
+  
+  
+  
+  const weeks = new Array((year+1)*52);
   for(var i = 0; i < weeks.length; i++) {
 	event = findSpecialEvent(Math.floor(i/52), i%52+1);
 	weeks[i] = {
@@ -182,8 +192,6 @@
         .duration(500)		
         .style("opacity", 0);	
     });
-	
-	
   
   /*
   find event in specified year and week
